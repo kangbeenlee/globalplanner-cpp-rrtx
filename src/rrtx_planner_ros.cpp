@@ -167,7 +167,7 @@ namespace rrtx_global_planner
 
         // publish the plan to visualize
         publishNodes();
-        // publishTree();
+        publishTree();
 
         return rrtx_->isPathValid();
     }
@@ -242,6 +242,7 @@ namespace rrtx_global_planner
 
         for (const auto node : tree_nodes)
         {
+            edge.points.clear();
             ps.x = node->getX();
             ps.y = node->getY();
 
