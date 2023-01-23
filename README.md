@@ -19,8 +19,7 @@ Attention
 1. This package can be used as global planner in [gazebo_navigation repository](https://github.com/kangbeenlee/gazebo_navigation.git).
 Tip: [Writing A Global Path Planner As Plugin in ROS](http://wiki.ros.org/navigation/Tutorials/Writing%20A%20Global%20Path%20Planner%20As%20Plugin%20in%20ROS)
 2. For simplicity, Algorithm 11 (removeObstacle) in RRTX is not applied in this code.
-3. Due to delay in tree visualization, you should annotate publishTree() function in rrtx_planner_ros.cpp. If you wanna visualize shortest path sub-tree, then unannotate this function.
-4. Optimization such as kdtrees is not applied.
+3. Optimization such as kdtrees is not applied.
 
 Usage
 -----
