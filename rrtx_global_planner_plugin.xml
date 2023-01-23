@@ -1,0 +1,7 @@
+<library path="lib/librrtx_global_planner_lib">
+  <class name="rrtx_global_planner/RRTXPlanner" type="rrtx_global_planner::RRTXPlanner" base_class_type="nav_core::BaseGlobalPlanner">
+    <description>
+      rrtx global planner
+    </description>
+  </class>
+</library>
