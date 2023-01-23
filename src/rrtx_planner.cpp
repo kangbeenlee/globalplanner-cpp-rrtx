@@ -310,22 +310,6 @@ namespace rrtx_global_planner
                 updateRobot();
                 first_flag = false;
             }
-            
-            // if (node_set_.size() < 1000)
-            // {
-            //     NodePtr v = randomNode();
-            //     NodePtr v_nearest = nearest(v);
-                
-            //     if (v->computeDistance(v_nearest) > delta_)
-            //         saturate(v, v_nearest);
-
-            //     if (isStateValid_(v))
-            //         extend(v, hyper_ball_radius_);
-        
-            //     if (isInNodeSet(v))
-            //         rewireNeighbours(v);
-            //         reduceInconsistency();
-            // }
 
             NodePtr v = randomNode();
             NodePtr v_nearest = nearest(v);
@@ -700,7 +684,8 @@ namespace rrtx_global_planner
         {
             robot_node_ = new_node;
             path_to_goal_ = true;
-        } 
+        }
+
         node_set_.insert(new_node);
         tree_nodes_.insert(new_node);
     }
