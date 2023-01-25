@@ -8,9 +8,7 @@ namespace rrtx_global_planner
 {
     Node::Node()
     {
-        // parent_.lock() = nullptr;
         children_ = std::make_shared<std::set<NodePtr>>();
-
         E_O_ = std::make_shared<std::set<NodePtr>>();
         N_o_plus_ = std::make_shared<std::set<NodePtr>>();
         N_o_minus_ = std::make_shared<std::set<NodePtr>>();
@@ -22,7 +20,6 @@ namespace rrtx_global_planner
     : x_(x), y_(y), lmc_(lmc), cost_to_goal_(cost_to_goal)
     {
         children_ = std::make_shared<std::set<NodePtr>>();
-
         E_O_ = std::make_shared<std::set<NodePtr>>();
         N_o_plus_ = std::make_shared<std::set<NodePtr>>();
         N_o_minus_ = std::make_shared<std::set<NodePtr>>();
@@ -184,7 +181,6 @@ namespace rrtx_global_planner
         {
             parent_ = new_parent;
             new_parent->addChild(shared_from_this());
-            // new_parent->children_->insert(shared_from_this());
         }
         // if new_parent is nullptr, initialize parent
         else
@@ -268,10 +264,6 @@ namespace rrtx_global_planner
         node_set_ = {};
         tree_nodes_ = {};
         orphan_nodes_ = {};
-
-        // node_set_ = std::make_shared<std::set<NodePtr>>();
-        // tree_nodes_ = std::make_shared<std::set<NodePtr>>();
-        // orphan_nodes_ = std::make_shared<std::set<NodePtr>>();
 
         zeta_d_ = std::acos(-1);
     }
@@ -599,7 +591,7 @@ namespace rrtx_global_planner
                 E_O.emplace(node, parent);
         }
         
-        // 모든 E_O에 대해서
+        // for every elements in E_O
         for (const auto& edge : E_O)
         {
             NodePtr v = edge.first;
@@ -734,10 +726,14 @@ namespace rrtx_global_planner
         if (robot_parent == nullptr)
             return;
 
-        double distance = std::hypot(robot_parent->getX() - robot_x_, robot_parent->getY() - robot_y_);
-        double edge_length = robot_node_->computeDistance(robot_parent);
-        if (distance <= edge_length / 2.0)
-            robot_node_ = robot_parent;
+        // 1. paper version
+        // double distance = std::hypot(robot_parent->getX() - robot_x_, robot_parent->getY() - robot_y_);
+        // double edge_length = robot_node_->computeDistance(robot_parent);
+        // if (distance <= edge_length / 2.0)
+        //     robot_node_ = robot_parent;
+
+        // 2. simulator version
+        robot_node_ = nearestLMC(robot_x_, robot_y_);
     }
 
     void RRTX::updateGamma()
@@ -941,7 +937,7 @@ namespace rrtx_global_planner
         std::list<std::pair<double, double>> path;
         path.push_back(std::make_pair(robot_x_, robot_y_));
 
-        NodePtr this_node = nearestLMC(robot_x_, robot_y_);
+        NodePtr this_node = robot_node_;
         while (this_node != goal_node_)
         {
             path.push_back(std::make_pair(this_node->getX(), this_node->getY()));
@@ -952,23 +948,6 @@ namespace rrtx_global_planner
 
         return path;
     }
-
-    // std::list<std::pair<double, double>> RRTX::getPath() const
-    // {
-    //     std::list<std::pair<double, double>> path;
-    //     path.push_back(std::make_pair(robot_x_, robot_y_));
-
-    //     NodePtr this_node = robot_node_;
-    //     while (this_node != goal_node_)
-    //     {
-    //         path.push_back(std::make_pair(this_node->getX(), this_node->getY()));
-    //         std::weak_ptr<Node> unlock_parent = this_node->getParent();
-    //         this_node = unlock_parent.lock();
-    //     }
-    //     path.push_back(std::make_pair(goal_node_->getX(), goal_node_->getY()));
-
-    //     return path;
-    // }
 
     const std::list<NodePtr> RRTX::getNodeSetWithOutOrphans() const
     {
