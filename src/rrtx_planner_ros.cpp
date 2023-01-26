@@ -229,25 +229,28 @@ namespace rrtx_global_planner
 
     void RRTXPlanner::publishTree()
     {
+        visualization_msgs::MarkerArray edges;
         visualization_msgs::Marker edge;
         edge.type = visualization_msgs::Marker::LINE_LIST;
         edge.header.frame_id = costmap_ros_->getGlobalFrameID();
-        // edge.action = visualization_msgs::Marker::ADD;
         geometry_msgs::Point ps, pe;
-
-        std::set<NodePtr> tree_nodes = rrtx_->getTreeNodes();
-
-        visualization_msgs::MarkerArray edges;
         unsigned int id = 0;
 
-        for (const auto node : tree_nodes)
+        std::deque<NodePtr> tree_nodes_deque;
+        tree_nodes_deque.emplace_back(rrtx_->getGoalNode());
+
+        while (tree_nodes_deque.size())
         {
-            edge.points.clear();
+            NodePtr node = tree_nodes_deque.front();
+            tree_nodes_deque.pop_front();
             ps.x = node->getX();
             ps.y = node->getY();
 
-            for (const auto& child : *node->getChildren())
+            for (const auto& child : *(node->getChildren()))
             {
+                tree_nodes_deque.emplace_back(child);
+
+                edge.points.clear();
                 pe.x = child->getX();
                 pe.y = child->getY();
                 edge.id = id;
@@ -264,4 +267,42 @@ namespace rrtx_global_planner
         }
         graph_pub_.publish(edges);
     }
+
+    // void RRTXPlanner::publishTree()
+    // {
+    //     visualization_msgs::Marker edge;
+    //     edge.type = visualization_msgs::Marker::LINE_LIST;
+    //     edge.header.frame_id = costmap_ros_->getGlobalFrameID();
+    //     // edge.action = visualization_msgs::Marker::ADD;
+    //     geometry_msgs::Point ps, pe;
+
+    //     std::set<NodePtr> tree_nodes = rrtx_->getTreeNodes();
+
+    //     visualization_msgs::MarkerArray edges;
+    //     unsigned int id = 0;
+
+    //     for (const auto node : tree_nodes)
+    //     {
+    //         edge.points.clear();
+    //         ps.x = node->getX();
+    //         ps.y = node->getY();
+
+    //         for (const auto& child : *node->getChildren())
+    //         {
+    //             pe.x = child->getX();
+    //             pe.y = child->getY();
+    //             edge.id = id;
+    //             id++;
+    //             edge.header.stamp = ros::Time::now();
+    //             edge.pose.orientation.w = 1;
+    //             edge.color.g = 1.0;
+    //             edge.color.a = 1.0;
+    //             edge.scale.x = 0.03;
+    //             edge.points.push_back(ps);
+    //             edge.points.push_back(pe);
+    //             edges.markers.push_back(edge);
+    //         }
+    //     }
+    //     graph_pub_.publish(edges);
+    // }
 } // end namespace global_planner
